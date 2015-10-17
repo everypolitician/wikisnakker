@@ -4,12 +4,14 @@ require 'colorize'
 require 'pry'
 require 'open-uri/cached'
 require 'json'
+require 'set'
 
 class WikiData
 
   class Lookup
 
-    def initialize(ids)
+    def initialize(ids, resolve=true)
+      @_used_props = Set.new
       @_hash = ids.compact.uniq.each_slice(50).map { |sliced|
         page_args = { 
           action: 'wbgetentities',
@@ -17,14 +19,39 @@ class WikiData
           format: 'json',
         }
         url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(page_args)
-        # warn "Fetching #{url}"
-        json = JSON.parse(open(url).read)
+        # warn "Fetching #{url}"
+        
+        # If a property is set to another Wikidata article, resolve that
+        # (e.g. set 'gender' to 'male' rather than 'Q6581097')
+        # We don't know yet what that will resolve to, and we don't want
+        # to look them up one by one, so store a promise and bulk-resolve
+        # when done
+        json = JSON.load(open(url).read, lambda { |h|
+          if h.class == Hash and h['type'] == 'wikibase-entityid'
+            @_used_props << h['value']['numeric-id'] 
+            h['resolved'] = lambda { prop(h['value']['numeric-id']) }
+          end
+        })
         json['entities']
       }.reduce(&:merge)
+
+      if resolve
+        props = Lookup.new(@_used_props.to_a.map { |e| "Q#{e}" }, false)
+        # This relies on the Property being described in 'en', but I think that's safe
+        @pmap = Hash[ props.all.map { |k, v| [k, v['labels']['en']['value']] } ]
+      end
     end
 
     def all
+      all = @_hash
+    end
+
+    def values
       @_hash.values
+    end
+
+    def prop(id)
+      @pmap[ "Q#{id.to_s.sub('P','')}" ]
     end
 
   end
@@ -33,7 +60,8 @@ class WikiData
 
     def self.find(ids)
       _ids = [ids].flatten
-      data = Lookup.new(_ids).all
+      lookup = Lookup.new(_ids)
+      data = lookup.values
       inflated = data.map { |rd| self.new(rd) }
       _ids.size == 1 ? inflated.first : inflated
     end
@@ -100,7 +128,8 @@ class WikiData
     def value
       case @snak['datatype']
       when 'wikibase-item'
-        "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
+        # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
+        @snak["datavalue"]["resolved"].call
       when 'quantity'
         if @snak["datavalue"]["value"]["upperBound"] == @snak["datavalue"]["value"]["lowerBound"]
           @snak["datavalue"]["value"]["amount"].to_i

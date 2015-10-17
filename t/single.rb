@@ -28,14 +28,13 @@ describe 'Single Record' do
 
   it 'should have been PM' do
     positions = subject.P39s
-    pm = positions.find_all { |p| p.value == 'Q737115' }
+    pm = positions.find_all { |p| p.value == 'Prime Minister of Estonia' }
     pm.size.must_equal 1
   end
 
   it 'should be male' do
     gender = subject.P21
-    # TODO resolve this to 'male'
-    gender.value.must_equal 'Q6581097'
+    gender.value.must_equal 'male'
   end
 
 
