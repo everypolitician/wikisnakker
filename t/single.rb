@@ -32,6 +32,12 @@ describe 'Single Record' do
     pm.size.must_equal 1
   end
 
+  it 'should be male' do
+    gender = subject.P21
+    # TODO resolve this to 'male'
+    gender.value.must_equal 'Q6581097'
+  end
+
 
 end
 
