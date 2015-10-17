@@ -18,7 +18,16 @@ describe 'Single Record' do
   end
 
   it 'should have a birth date' do
-    subject.p569.must_equal '1966-08-27'
+    dob = subject.P569
+    dob.to_s.must_equal '1966-08-27'
   end
+
+  it 'should have been PM' do
+    positions = subject.P39s
+    pm = positions.find_all { |p| p.value == 'Q737115' }
+    pm.size.must_equal 1
+  end
+
+
 end
 

@@ -66,7 +66,27 @@ class WikiData
     end
 
     def p(pid)
-      (@_raw['claims']["P#{pid}"] || []).map { |snak| Snak.new(snak['mainsnak']).value }
+      (@_raw['claims']["P#{pid}"] || []).map { |c| Claim.new(c) }
+    end
+
+  end
+
+  class Claim
+
+    def initialize(data)
+      @data = data
+    end
+
+    def value
+      mainsnak.value
+    end
+
+    def to_s
+      mainsnak.value
+    end
+
+    def mainsnak
+      @_mainsnak ||= Snak.new( @data["mainsnak"] )
     end
 
   end
@@ -79,6 +99,8 @@ class WikiData
 
     def value
       case @snak['datatype']
+      when 'wikibase-item'
+        "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
       when 'time'
         case @snak["datavalue"]["value"]["precision"]
         when 11
