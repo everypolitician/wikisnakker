@@ -19,7 +19,11 @@ describe 'Single Record' do
 
   it 'should have a birth date' do
     dob = subject.P569
-    dob.to_s.must_equal '1966-08-27'
+    "#{dob}".must_equal '1966-08-27'
+  end
+
+  it 'should have two children' do
+    subject.P1971.value.must_equal 2
   end
 
   it 'should have been PM' do

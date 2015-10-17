@@ -101,6 +101,12 @@ class WikiData
       case @snak['datatype']
       when 'wikibase-item'
         "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
+      when 'quantity'
+        if @snak["datavalue"]["value"]["upperBound"] == @snak["datavalue"]["value"]["lowerBound"]
+          @snak["datavalue"]["value"]["amount"].to_i
+        else
+          binding.pry
+        end
       when 'time'
         case @snak["datavalue"]["value"]["precision"]
         when 11
