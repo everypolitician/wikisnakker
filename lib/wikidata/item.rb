@@ -130,6 +130,8 @@ class WikiData
       when 'wikibase-item'
         # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
         @snak["datavalue"]["resolved"].call
+      when 'string'
+          @snak["datavalue"]["value"]
       when 'quantity'
         if @snak["datavalue"]["value"]["upperBound"] == @snak["datavalue"]["value"]["lowerBound"]
           @snak["datavalue"]["value"]["amount"].to_i

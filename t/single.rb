@@ -22,8 +22,20 @@ describe 'Single Record' do
     "#{dob}".must_equal '1966-08-27'
   end
 
+  it 'should be a politician' do
+    subject.P106.value.must_equal 'politician'
+  end
+
   it 'should have two children' do
     subject.P1971.value.must_equal 2
+  end
+
+  it 'should have a Freebase ID' do
+    subject.P646.value.must_equal '/m/01y41c'
+  end
+
+  it 'should be in IRL' do
+    subject.P102.value.must_equal 'Pro Patria and Res Publica Union'
   end
 
   it 'should have been PM' do
