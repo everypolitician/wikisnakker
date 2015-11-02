@@ -1,6 +1,7 @@
 require "wikidata/item/version"
 
 require 'colorize'
+require 'digest/md5'
 require 'pry'
 require 'open-uri/cached'
 require 'json'
@@ -125,11 +126,18 @@ class WikiData
       @snak = snak
     end
 
+    # https://www.wikidata.org/wiki/Special:ListDatatypes
+    # https://www.wikidata.org/wiki/Help:Data_type
     def value
       case @snak['datatype']
       when 'wikibase-item'
         # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
         @snak["datavalue"]["resolved"].call
+      when 'commonsMedia'
+        # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
+        # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
+        md5 = Digest::MD5.hexdigest @snak["datavalue"]["value"]
+        'https://upload.wikimedia.org/wikipedia/commons/%s/%s/%s' % [md5[0], md5[0..1], @snak["datavalue"]["value"]]
       when 'string'
           @snak["datavalue"]["value"]
       when 'quantity'

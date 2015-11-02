@@ -38,6 +38,10 @@ describe 'Single Record' do
     subject.P102.value.must_equal 'Pro Patria and Res Publica Union'
   end
 
+  it 'should expand Image URLs' do
+    subject.P18.value.must_equal 'https://upload.wikimedia.org/wikipedia/commons/0/08/Juhan-Parts.jpg'
+  end
+
   it 'should have been PM' do
     positions = subject.P39s
     pm = positions.find_all { |p| p.value == 'Prime Minister of Estonia' }
