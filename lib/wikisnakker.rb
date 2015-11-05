@@ -131,8 +131,8 @@ module Wikisnakker
     def value
       case @snak['datatype']
       when 'commonsMedia'
-        # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
-        # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
+        # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
+        # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
         md5 = Digest::MD5.hexdigest @snak["datavalue"]["value"]
         'https://upload.wikimedia.org/wikipedia/commons/%s/%s/%s' % [md5[0], md5[0..1], @snak["datavalue"]["value"]]
       when 'globe-coordinate'
