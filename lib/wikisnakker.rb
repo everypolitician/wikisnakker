@@ -8,54 +8,72 @@ require 'set'
 
 module Wikisnakker
   class Lookup
-    def initialize(ids, resolve = true)
-      @_used_props = Set.new
-      @_hash = ids.compact.uniq.each_slice(50).map do |sliced|
-        page_args = {
-          action: 'wbgetentities',
-          ids: sliced.join('|'),
-          format: 'json'
-        }
-        url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(page_args)
-        # warn "Fetching #{url}"
-
-        # If a property is set to another Wikidata article, resolve that
-        # (e.g. set 'gender' to 'male' rather than 'Q6581097')
-        # We don't know yet what that will resolve to, and we don't want
-        # to look them up one by one, so store a promise and bulk-resolve
-        # when done
-        json = JSON.load(open(url).read, lambda do |h|
-          if h.class == Hash && h['type'] == 'wikibase-entityid'
-            @_used_props << h['value']['numeric-id']
-            h['resolved'] = -> { prop(h['value']['numeric-id']) }
-          end
-        end)
-        json['entities']
-      end.reduce(&:merge)
-
-      return unless resolve
-      props = Lookup.new(@_used_props.to_a.map { |e| "Q#{e}" }, false)
-      # This relies on the Property being described in 'en', but I think that's safe
-      @pmap = Hash[props.all.map { |k, v| [k, v['labels']['en']['value']] }]
+    def self.find(ids)
+      lookup = new(ids)
+      property_lookup = new(lookup.properties)
+      lookup.populate_with(property_lookup)
+      lookup
     end
 
-    def all
-      @_hash
+    def initialize(*ids)
+      ids = ids.flatten.compact.uniq
+      @used_props = Set.new
+      entities = ids.each_slice(50).map do |id_slice|
+        get(id_slice)['entities']
+      end
+      @entities = entities.reduce(&:merge)
+    end
+
+    def properties
+      @used_props.to_a.map { |e| "Q#{e}" }
     end
 
     def values
-      @_hash.values
+      @values ||= @entities.values
     end
 
-    def prop(id)
-      @pmap["Q#{id.to_s.sub('P', '')}"]
+    def [](key)
+      pmap[key]
+    end
+
+    def populate_with(other)
+      JSON.recurse_proc(@entities) do |result|
+        next unless result.is_a?(Hash) && result['type'] == 'wikibase-entityid'
+        result['value'] = other["Q#{result['value']['numeric-id']}"]
+      end
+    end
+
+    private
+
+    def pmap
+      @pmap ||= Hash[@entities.map { |k, v| [k, v['labels']['en']['value']] }]
+    end
+
+    def get(*ids)
+      query = {
+        action: 'wbgetentities',
+        ids: ids.flatten.join('|'),
+        format: 'json'
+      }
+      url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(query)
+      JSON.load(open(url), method(:resolve_wikibase_entityid))
+    end
+
+    # If a property is set to another Wikidata article, resolve that
+    # (e.g. set 'gender' to 'male' rather than 'Q6581097')
+    # We don't know yet what that will resolve to, and we don't want
+    # to look them up one by one, so store a promise and bulk-resolve
+    # when done
+    def resolve_wikibase_entityid(result)
+      return unless result.is_a?(Hash) && result['type'] == 'wikibase-entityid'
+      @used_props << result['value']['numeric-id']
     end
   end
 
   class Item
     def self.find(*ids)
       ids = ids.flatten
-      lookup = Lookup.new(ids)
+      lookup = Lookup.find(ids)
       data = lookup.values
       inflated = data.map { |rd| new(rd) }
       ids.size == 1 ? inflated.first : inflated
@@ -131,7 +149,7 @@ module Wikisnakker
         binding.pry
       when 'wikibase-item'
         # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
-        @snak['datavalue']['resolved'].call
+        @snak['datavalue']['value']
       when 'wikibase-property'
         # Not implemented yet
         binding.pry
