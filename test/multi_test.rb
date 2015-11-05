@@ -7,13 +7,13 @@ def ids_from_claim(claim_str)
 end
 
 describe 'data' do
+  around { |test| VCR.use_cassette('multiple', &test) }
+
   subject do
     # Members of the 13th Riigikogu
     ids = ids_from_claim('463:20530392')
     Wikisnakker::Item.find(ids)
   end
-
-  around { |test| VCR.use_cassette('multiple', &test) }
 
   it 'should get multiple items' do
     subject.count.must_be :>, 50
