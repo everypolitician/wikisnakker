@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require 'wikidata/item'
+require 'wikisnakker'
 
 require 'open-uri/cached'
 
@@ -12,10 +12,10 @@ end
 
 describe 'data' do
 
-  subject { 
+  subject {
     # Members of the 13th Riigikogu
     ids = ids_from_claim('463:20530392')
-    WikiData::Item.find(ids)
+    Wikisnakker::Item.find(ids)
   }
 
   it 'should get multiple items' do
