@@ -1,5 +1,4 @@
-require 'minitest/autorun'
-require 'wikisnakker'
+require 'test_helper'
 
 describe 'Single Record' do
   subject { Wikisnakker::Item.find('Q312894') }

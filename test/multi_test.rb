@@ -1,7 +1,4 @@
-require 'minitest/autorun'
-require 'wikisnakker'
-
-require 'open-uri/cached'
+require 'test_helper'
 
 def ids_from_claim(claim_str)
   url = "https://wdq.wmflabs.org/api?q=claim[#{claim_str}]"
