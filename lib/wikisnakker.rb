@@ -1,4 +1,4 @@
-require "wikidata/item/version"
+require 'wikisnakker/version'
 
 require 'colorize'
 require 'digest/md5'
@@ -7,21 +7,21 @@ require 'open-uri/cached'
 require 'json'
 require 'set'
 
-class WikiData
+module Wikisnakker
 
   class Lookup
 
     def initialize(ids, resolve=true)
       @_used_props = Set.new
       @_hash = ids.compact.uniq.each_slice(50).map { |sliced|
-        page_args = { 
+        page_args = {
           action: 'wbgetentities',
           ids: sliced.join("|"),
           format: 'json',
         }
         url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(page_args)
         # warn "Fetching #{url}"
-        
+
         # If a property is set to another Wikidata article, resolve that
         # (e.g. set 'gender' to 'male' rather than 'Q6581097')
         # We don't know yet what that will resolve to, and we don't want
@@ -29,7 +29,7 @@ class WikiData
         # when done
         json = JSON.load(open(url).read, lambda { |h|
           if h.class == Hash and h['type'] == 'wikibase-entityid'
-            @_used_props << h['value']['numeric-id'] 
+            @_used_props << h['value']['numeric-id']
             h['resolved'] = lambda { prop(h['value']['numeric-id']) }
           end
         })
@@ -57,7 +57,7 @@ class WikiData
 
   end
 
-  class Item < WikiData
+  class Item
 
     def self.find(ids)
       _ids = [ids].flatten
@@ -77,7 +77,7 @@ class WikiData
       res = p(pid)
       wantarray.empty? ? p(pid).first : p(pid)
     end
-      
+
     def id
       @_raw['title']
     end

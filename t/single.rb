@@ -1,9 +1,9 @@
 require 'minitest/autorun'
-require 'wikidata/item'
+require 'wikisnakker'
 
 describe 'Single Record' do
 
-  subject { WikiData::Item.find('Q312894') }
+  subject { Wikisnakker::Item.find('Q312894') }
 
   it 'should should know ID' do
     subject.id.must_equal 'Q312894'
