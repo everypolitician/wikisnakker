@@ -2,7 +2,7 @@ require 'wikisnakker/version'
 
 require 'digest/md5'
 require 'pry'
-require 'open-uri/cached'
+require 'open-uri'
 require 'json'
 require 'set'
 
