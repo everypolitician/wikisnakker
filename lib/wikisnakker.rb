@@ -63,13 +63,15 @@ module Wikisnakker
 
     def initialize(raw)
       @_raw = raw
-    end
+      raw['claims'].keys.each do |property_id|
+        define_singleton_method property_id.to_sym do
+          property(property_id).first
+        end
 
-    def method_missing(name)
-      handle = name.to_s.upcase.match(/P(\d+)(S?)/) || return
-      property_id, wantarray = handle.captures
-      res = property(property_id)
-      wantarray.empty? ? res.first : res
+        define_singleton_method "#{property_id}s".to_sym do
+          property(property_id)
+        end
+      end
     end
 
     def id
@@ -87,7 +89,7 @@ module Wikisnakker
     end
 
     def property(property_id)
-      (@_raw['claims']["P#{property_id}"] || []).map { |c| Claim.new(c) }
+      (@_raw['claims'][property_id] || []).map { |c| Claim.new(c) }
     end
   end
 
