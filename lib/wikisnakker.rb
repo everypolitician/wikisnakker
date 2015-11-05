@@ -61,8 +61,12 @@ module Wikisnakker
       ids.size == 1 ? inflated.first : inflated
     end
 
+    attr_reader :id
+    attr_reader :labels
+
     def initialize(raw)
-      @_raw = raw
+      @id = raw['title']
+      @labels = raw['labels']
       raw['claims'].each do |property_id, claims|
         define_singleton_method property_id.to_sym do
           send("#{property_id}s").first
@@ -72,14 +76,6 @@ module Wikisnakker
           claims.map { |c| Claim.new(c) }
         end
       end
-    end
-
-    def id
-      @_raw['title']
-    end
-
-    def labels
-      @_raw['labels']
     end
 
     def label(lang)
