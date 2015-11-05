@@ -78,8 +78,6 @@ module Wikisnakker
       @_raw['title']
     end
 
-    attr_reader :_raw
-
     def labels
       @_raw['labels']
     end
