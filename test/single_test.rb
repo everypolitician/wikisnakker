@@ -3,6 +3,8 @@ require 'test_helper'
 describe 'Single Record' do
   subject { Wikisnakker::Item.find('Q312894') }
 
+  around { |test| VCR.use_cassette('single', &test) }
+
   it 'should should know ID' do
     subject.id.must_equal 'Q312894'
   end

@@ -13,6 +13,8 @@ describe 'data' do
     Wikisnakker::Item.find(ids)
   end
 
+  around { |test| VCR.use_cassette('multiple', &test) }
+
   it 'should get multiple items' do
     subject.count.must_be :>, 50
   end
