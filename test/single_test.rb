@@ -52,4 +52,19 @@ describe 'Single Record' do
     gender = subject.P21
     gender.value.must_equal 'male'
   end
+
+  it 'should return nil for a singular missing property' do
+    subject.P999999999999.must_be_nil
+  end
+
+  it 'should return an empty array for a singular missing property' do
+    subject.P999999999999s.must_equal []
+  end
+
+  it 'should implement "respond_to?" correctly' do
+    subject.respond_to?(:P999999999999).must_equal true
+    subject.respond_to?(:P999999999999s).must_equal true
+    subject.respond_to?(:Ps).must_equal false
+    subject.respond_to?(:p42).must_equal false
+  end
 end
