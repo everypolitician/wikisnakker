@@ -63,13 +63,13 @@ module Wikisnakker
 
     def initialize(raw)
       @_raw = raw
-      raw['claims'].keys.each do |property_id|
+      raw['claims'].each do |property_id, claims|
         define_singleton_method property_id.to_sym do
-          property(property_id).first
+          send("#{property_id}s").first
         end
 
         define_singleton_method "#{property_id}s".to_sym do
-          property(property_id)
+          claims.map { |c| Claim.new(c) }
         end
       end
     end
@@ -84,10 +84,6 @@ module Wikisnakker
 
     def label(lang)
       labels[lang]['value']
-    end
-
-    def property(property_id)
-      (@_raw['claims'][property_id] || []).map { |c| Claim.new(c) }
     end
   end
 
