@@ -68,12 +68,12 @@ module Wikisnakker
       @id = raw['title']
       @labels = raw['labels']
       raw['claims'].each do |property_id, claims|
-        define_singleton_method property_id.to_sym do
-          send("#{property_id}s").first
-        end
-
         define_singleton_method "#{property_id}s".to_sym do
           claims.map { |c| Claim.new(c) }
+        end
+
+        define_singleton_method property_id.to_sym do
+          send("#{property_id}s").first
         end
       end
     end
