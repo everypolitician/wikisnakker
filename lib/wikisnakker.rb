@@ -67,8 +67,8 @@ module Wikisnakker
 
     def method_missing(name)
       handle = name.to_s.upcase.match(/P(\d+)(S?)/) || return
-      pid, wantarray = handle.captures
-      res = p(pid)
+      property_id, wantarray = handle.captures
+      res = property(property_id)
       wantarray.empty? ? res.first : res
     end
 
@@ -86,8 +86,8 @@ module Wikisnakker
       labels[lang]['value']
     end
 
-    def p(pid)
-      (@_raw['claims']["P#{pid}"] || []).map { |c| Claim.new(c) }
+    def property(property_id)
+      (@_raw['claims']["P#{property_id}"] || []).map { |c| Claim.new(c) }
     end
   end
 
