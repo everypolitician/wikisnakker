@@ -6,4 +6,4 @@ Rake::TestTask.new do |t|
   t.test_files = FileList['t/*.rb']
 end
 
-
+task default: :test
