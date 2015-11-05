@@ -1,6 +1,5 @@
 require 'wikisnakker/version'
 
-require 'colorize'
 require 'digest/md5'
 require 'pry'
 require 'open-uri/cached'
