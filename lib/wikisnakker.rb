@@ -61,33 +61,25 @@ module Wikisnakker
       ids.size == 1 ? inflated.first : inflated
     end
 
+    attr_reader :id
+    attr_reader :labels
+
     def initialize(raw)
-      @_raw = raw
-    end
+      @id = raw['title']
+      @labels = raw['labels']
+      raw['claims'].each do |property_id, claims|
+        define_singleton_method "#{property_id}s".to_sym do
+          claims.map { |c| Claim.new(c) }
+        end
 
-    def method_missing(name)
-      handle = name.to_s.upcase.match(/P(\d+)(S?)/) || return
-      pid, wantarray = handle.captures
-      res = p(pid)
-      wantarray.empty? ? res.first : res
-    end
-
-    def id
-      @_raw['title']
-    end
-
-    attr_reader :_raw
-
-    def labels
-      @_raw['labels']
+        define_singleton_method property_id.to_sym do
+          send("#{property_id}s").first
+        end
+      end
     end
 
     def label(lang)
       labels[lang]['value']
-    end
-
-    def p(pid)
-      (@_raw['claims']["P#{pid}"] || []).map { |c| Claim.new(c) }
     end
   end
 
