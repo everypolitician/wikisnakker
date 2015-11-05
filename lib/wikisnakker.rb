@@ -61,6 +61,8 @@ module Wikisnakker
       ids.size == 1 ? inflated.first : inflated
     end
 
+    PROPERTY_REGEX = /^P\d+s?$/
+
     attr_reader :id
     attr_reader :labels
 
@@ -76,6 +78,15 @@ module Wikisnakker
           send("#{property_id}s").first
         end
       end
+    end
+
+    def method_missing(method_name)
+      return super unless method_name.to_s.match(PROPERTY_REGEX)
+      method_name[-1] == 's' ? [] : nil
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      method_name.to_s.match(PROPERTY_REGEX) || super
     end
 
     def label(lang)
