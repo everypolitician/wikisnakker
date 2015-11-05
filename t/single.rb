@@ -2,7 +2,6 @@ require 'minitest/autorun'
 require 'wikisnakker'
 
 describe 'Single Record' do
-
   subject { Wikisnakker::Item.find('Q312894') }
 
   it 'should should know ID' do
@@ -52,7 +51,4 @@ describe 'Single Record' do
     gender = subject.P21
     gender.value.must_equal 'male'
   end
-
-
 end
-
