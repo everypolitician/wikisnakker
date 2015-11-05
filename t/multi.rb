@@ -4,7 +4,7 @@ require 'wikisnakker'
 require 'open-uri/cached'
 
 def ids_from_claim(claim_str)
-  url = 'https://wdq.wmflabs.org/api?q=claim[%s]' % claim_str
+  url = "https://wdq.wmflabs.org/api?q=claim[#{claim_str}]"
   json = JSON.parse(open(url).read)
   json['items'].map { |id| "Q#{id}" }
 end

@@ -34,15 +34,14 @@ module Wikisnakker
         json['entities']
       end.reduce(&:merge)
 
-      if resolve
-        props = Lookup.new(@_used_props.to_a.map { |e| "Q#{e}" }, false)
-        # This relies on the Property being described in 'en', but I think that's safe
-        @pmap = Hash[props.all.map { |k, v| [k, v['labels']['en']['value']] }]
-      end
+      return unless resolve
+      props = Lookup.new(@_used_props.to_a.map { |e| "Q#{e}" }, false)
+      # This relies on the Property being described in 'en', but I think that's safe
+      @pmap = Hash[props.all.map { |k, v| [k, v['labels']['en']['value']] }]
     end
 
     def all
-      all = @_hash
+      @_hash
     end
 
     def values
@@ -55,12 +54,12 @@ module Wikisnakker
   end
 
   class Item
-    def self.find(ids)
-      _ids = [ids].flatten
-      lookup = Lookup.new(_ids)
+    def self.find(*ids)
+      ids = ids.flatten
+      lookup = Lookup.new(ids)
       data = lookup.values
       inflated = data.map { |rd| new(rd) }
-      _ids.size == 1 ? inflated.first : inflated
+      ids.size == 1 ? inflated.first : inflated
     end
 
     def initialize(raw)
@@ -68,10 +67,10 @@ module Wikisnakker
     end
 
     def method_missing(name)
-      handle = name.to_s.upcase.match(/P(\d+)(S?)/) or return
+      handle = name.to_s.upcase.match(/P(\d+)(S?)/) || return
       pid, wantarray = handle.captures
       res = p(pid)
-      wantarray.empty? ? p(pid).first : p(pid)
+      wantarray.empty? ? res.first : res
     end
 
     def id
@@ -124,7 +123,7 @@ module Wikisnakker
         # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
         # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
         md5 = Digest::MD5.hexdigest @snak['datavalue']['value']
-        'https://upload.wikimedia.org/wikipedia/commons/%s/%s/%s' % [md5[0], md5[0..1], @snak['datavalue']['value']]
+        "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{@snak['datavalue']['value']}"
       when 'globe-coordinate'
         # Not implemented yet
         binding.pry
