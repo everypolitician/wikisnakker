@@ -6,6 +6,20 @@ require 'open-uri'
 require 'json'
 require 'set'
 
+# Recursively calls passed _Proc_ if the parsed data structure is an _Array_ or _Hash_
+def recurse_proc(result, &proc)
+  case result
+  when Array
+    result.each { |x| recurse_proc x, &proc }
+    proc.call result
+  when Hash
+    result.each { |x, y| recurse_proc x, &proc; recurse_proc y, &proc }
+    proc.call result
+  else
+    proc.call result
+  end
+end
+
 module Wikisnakker
   class Lookup
     def self.find(ids)
@@ -37,7 +51,7 @@ module Wikisnakker
     end
 
     def populate_with(other)
-      JSON.recurse_proc(@entities) do |result|
+      recurse_proc(@entities) do |result|
         next unless result.is_a?(Hash) && result['type'] == 'wikibase-entityid'
         result['value'] = other["Q#{result['value']['numeric-id']}"]
       end
@@ -56,7 +70,9 @@ module Wikisnakker
         format: 'json'
       }
       url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(query)
-      JSON.load(open(url), method(:resolve_wikibase_entityid))
+      json = JSON.parse(open(url).read)
+      recurse_proc(json, &method(:resolve_wikibase_entityid))
+      json
     end
 
     # If a property is set to another Wikidata article, resolve that
