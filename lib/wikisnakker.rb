@@ -99,12 +99,11 @@ module Wikisnakker
   end
 
   class Item
-    def self.find(*ids)
-      ids = ids.flatten
+    def self.find(ids)
       lookup = Lookup.find(ids)
       data = lookup.values
       inflated = data.map { |rd| new(rd) }
-      ids.size == 1 ? inflated.first : inflated
+      ids.is_a?(Array) ? inflated : inflated.first
     end
 
     PROPERTY_REGEX = /^P\d+s?$/
