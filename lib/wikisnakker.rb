@@ -149,57 +149,81 @@ module Wikisnakker
     end
 
     def mainsnak
-      @_mainsnak ||= Snak.new(@data['mainsnak'])
+      @_mainsnak ||= Snak::Finder.for(@data['mainsnak'])
     end
   end
 
-  class Snak
-    def initialize(snak)
-      @snak = snak
+  module Snak
+    class Base
+      attr_reader :snak
+
+      def initialize(snak)
+        @snak = snak
+      end
     end
 
-    # https://www.wikidata.org/wiki/Special:ListDatatypes
-    # https://www.wikidata.org/wiki/Help:Data_type
-    def value
-      case @snak['datatype']
-      when 'commonsMedia'
+    class WikibaseItem < Base
+      def value
+        Item.new(snak['datavalue']['value'])
+      end
+    end
+
+    class Quantity < Base
+      def value
+        if snak['datavalue']['value']['upperBound'] == snak['datavalue']['value']['lowerBound']
+          snak['datavalue']['value']['amount'].to_i
+        else
+          binding.pry
+        end
+      end
+    end
+
+    class String < Base
+      def value
+        snak['datavalue']['value']
+      end
+    end
+
+    class CommonsMedia < Base
+      def value
         # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
-        # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
-        md5 = Digest::MD5.hexdigest @snak['datavalue']['value']
-        "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{@snak['datavalue']['value']}"
-      when 'globe-coordinate'
-        # Not implemented yet
-        binding.pry
-      when 'wikibase-item'
-        # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
-        Item.new(@snak['datavalue']['value'])
-      when 'wikibase-property'
-        # Not implemented yet
-        binding.pry
-      when 'string'
-        @snak['datavalue']['value']
-      when 'monolingualtext'
-        # Not implemented yet
-        binding.pry
-      when 'quantity'
-        if @snak['datavalue']['value']['upperBound'] == @snak['datavalue']['value']['lowerBound']
-          @snak['datavalue']['value']['amount'].to_i
-        else
-          binding.pry
-        end
-      when 'time'
-        case @snak['datavalue']['value']['precision']
+        # commons = 'https://commons.wikimedia.org/wiki/File:%s' % snak["datavalue"]["value"]
+        md5 = Digest::MD5.hexdigest snak['datavalue']['value']
+        "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{snak['datavalue']['value']}"
+      end
+    end
+
+    class Time < Base
+      def value
+        case snak['datavalue']['value']['precision']
         when 11
-          @snak['datavalue']['value']['time'][1..10]
+          snak['datavalue']['value']['time'][1..10]
         else
           binding.pry
         end
-      when 'url'
-        # Not implemented yet
+      end
+    end
+
+    class Unknown < Base
+      def value
+        warn "Unknown datatype: #{snak['datatype']}"
         binding.pry
-      else
-        warn "Unknown datatype: #{@snak['datatype']}"
-        binding.pry
+      end
+    end
+
+    class Finder
+      # https://www.wikidata.org/wiki/Special:ListDatatypes
+      # https://www.wikidata.org/wiki/Help:Data_type
+      MAPPING = {
+        'wikibase-item' => WikibaseItem,
+        'quantity' => Quantity,
+        'string' => String,
+        'commonsMedia' => CommonsMedia,
+        'time' => Time
+      }
+
+      def self.for(snak)
+        MAPPING.fetch(snak['datatype'], Unknown).new(snak)
       end
     end
   end
