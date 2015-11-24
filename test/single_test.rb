@@ -23,7 +23,7 @@ describe 'Single Record' do
   end
 
   it 'should be a politician' do
-    subject.P106.value.must_equal 'politician'
+    subject.P106.value.label('en').must_equal 'politician'
   end
 
   it 'should have two children' do
@@ -35,7 +35,7 @@ describe 'Single Record' do
   end
 
   it 'should be in IRL' do
-    subject.P102.value.must_equal 'Pro Patria and Res Publica Union'
+    subject.P102.value.label('en').must_equal 'Pro Patria and Res Publica Union'
   end
 
   it 'should expand Image URLs' do
@@ -44,13 +44,13 @@ describe 'Single Record' do
 
   it 'should have been PM' do
     positions = subject.P39s
-    pm = positions.find_all { |p| p.value == 'Prime Minister of Estonia' }
+    pm = positions.find_all { |p| p.value.label('en') == 'Prime Minister of Estonia' }
     pm.size.must_equal 1
   end
 
   it 'should be male' do
     gender = subject.P21
-    gender.value.must_equal 'male'
+    gender.value.label('en').must_equal 'male'
   end
 
   it 'should return nil for a singular missing property' do

@@ -33,7 +33,7 @@ module Wikisnakker
     end
 
     def [](key)
-      pmap[key]
+      @entities[key]
     end
 
     def populate_with(properties)
@@ -43,10 +43,6 @@ module Wikisnakker
     end
 
     private
-
-    def pmap
-      @pmap ||= Hash[@entities.map { |k, v| [k, v['labels']['en']['value']] }]
-    end
 
     def get(*ids)
       query = {
@@ -176,7 +172,7 @@ module Wikisnakker
         binding.pry
       when 'wikibase-item'
         # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
-        @snak['datavalue']['value']
+        Item.new(@snak['datavalue']['value'])
       when 'wikibase-property'
         # Not implemented yet
         binding.pry
