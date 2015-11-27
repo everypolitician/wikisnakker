@@ -195,8 +195,7 @@ module Wikisnakker
           binding.pry
         end
       when 'url'
-        # Not implemented yet
-        binding.pry
+        @snak['datavalue']['value']
       else
         warn "Unknown datatype: #{@snak['datatype']}"
         binding.pry
