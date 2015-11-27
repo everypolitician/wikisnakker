@@ -68,3 +68,14 @@ describe 'Single Record' do
     subject.respond_to?(:p42).must_equal false
   end
 end
+
+describe 'Record with URL' do
+  around { |test| VCR.use_cassette('url', &test) }
+
+  subject { Wikisnakker::Item.find('Q1162691') }
+
+  it 'should have a website' do
+    subject.P856.value.must_equal 'http://www.pnpjamaica.com/'
+  end
+end
+
