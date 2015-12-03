@@ -165,8 +165,9 @@ module Wikisnakker
       when 'commonsMedia'
         # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
         # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
-        md5 = Digest::MD5.hexdigest @snak['datavalue']['value']
-        "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{@snak['datavalue']['value']}"
+        val = @snak['datavalue']['value'].gsub(' ', '_')
+        md5 = Digest::MD5.hexdigest val
+        "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{val}"
       when 'globe-coordinate'
         # Not implemented yet
         binding.pry
