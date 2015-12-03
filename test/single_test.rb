@@ -70,12 +70,16 @@ describe 'Single Record' do
 end
 
 describe 'Record with URL' do
-  around { |test| VCR.use_cassette('url', &test) }
+  around { |test| VCR.use_cassette('mdc', &test) }
 
-  subject { Wikisnakker::Item.find('Q1162691') }
+  subject { Wikisnakker::Item.find('Q1146616') }
 
   it 'should have a website' do
-    subject.P856.value.must_equal 'http://www.pnpjamaica.com/'
+    subject.P856.value.must_equal 'http://www.mdczimbabwe.org/'
+  end
+
+  it 'should have a logo' do
+    subject.P154.value.must_equal 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Flag_of_the_Movement_for_Democratic_Change.svg'
   end
 end
 
