@@ -178,25 +178,16 @@ module Wikisnakker
         val = @snak['datavalue']['value'].gsub(' ', '_')
         md5 = Digest::MD5.hexdigest val
         "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{val}"
-      when 'globe-coordinate'
-        # Not implemented yet
-        binding.pry
       when 'wikibase-item'
         # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
         Item.new(@snak['datavalue']['value'])
-      when 'wikibase-property'
-        # Not implemented yet
-        binding.pry
       when 'string'
         @snak['datavalue']['value']
-      when 'monolingualtext'
-        # Not implemented yet
-        binding.pry
       when 'quantity'
         if @snak['datavalue']['value']['upperBound'] == @snak['datavalue']['value']['lowerBound']
           @snak['datavalue']['value']['amount'].to_i
         else
-          binding.pry
+          warn "FIXME: Unhandled 'quantity': #{@snak['datavalue']['value']}"
         end
       when 'time'
         case @snak['datavalue']['value']['precision']
@@ -205,13 +196,13 @@ module Wikisnakker
         when 9
           @snak['datavalue']['value']['time'][1..4]
         else
-          binding.pry
+          warn "FIXME: Unhandled 'time' precision: #{@snak['datavalue']['value']['precision']}"
         end
       when 'url'
         @snak['datavalue']['value']
       else
-        warn "Unknown datatype: #{@snak['datatype']}"
-        binding.pry
+        warn "FIXME: '#{@snak['datatype']}' is not implemented yet in Wikisnakker::Snak#value. Defaulting to empty string. #{@snak['datavalue']['value']}"
+        ''
       end
     end
   end
