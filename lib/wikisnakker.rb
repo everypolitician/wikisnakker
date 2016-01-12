@@ -123,7 +123,7 @@ module Wikisnakker
       end
     end
 
-    def method_missing(method_name)
+    def method_missing(method_name, *arguments, &block)
       return super unless method_name.to_s.match(PROPERTY_REGEX)
       method_name[-1] == 's' ? [] : nil
     end
