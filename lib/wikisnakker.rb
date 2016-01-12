@@ -123,6 +123,10 @@ module Wikisnakker
       end
     end
 
+    def [](key)
+      send(key)
+    end
+
     def method_missing(method_name, *arguments, &block)
       return super unless method_name.to_s.match(PROPERTY_REGEX)
       method_name[-1] == 's' ? [] : nil

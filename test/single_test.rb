@@ -85,5 +85,9 @@ describe 'Record with URL' do
   it 'should have a list of properties' do
     subject.properties.must_equal ["P31", "P646", "P17", "P571", "P159", "P1142", "P856", "P154", "P488", "P214"]
   end
+
+  it 'should allow accessing properties using square brackets' do
+    subject[:P856].value.must_equal 'http://www.mdczimbabwe.org/'
+  end
 end
 
