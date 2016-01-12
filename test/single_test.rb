@@ -81,5 +81,9 @@ describe 'Record with URL' do
   it 'should have a logo' do
     subject.P154.value.must_equal 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Flag_of_the_Movement_for_Democratic_Change.svg'
   end
+
+  it 'should have a list of properties' do
+    subject.properties.must_equal ["P31", "P646", "P17", "P571", "P159", "P1142", "P856", "P154", "P488", "P214"]
+  end
 end
 

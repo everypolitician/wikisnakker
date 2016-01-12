@@ -106,10 +106,12 @@ module Wikisnakker
 
     attr_reader :id
     attr_reader :labels
+    attr_reader :properties
 
     def initialize(raw)
       @id = raw['title']
       @labels = raw['labels']
+      @properties = raw['claims'].keys
       raw['claims'].each do |property_id, claims|
         define_singleton_method "#{property_id}s".to_sym do
           claims.map { |c| Claim.new(c) }
