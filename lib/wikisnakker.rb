@@ -202,6 +202,8 @@ module Wikisnakker
         case @snak['datavalue']['value']['precision']
         when 11
           @snak['datavalue']['value']['time'][1..10]
+        when 9
+          @snak['datavalue']['value']['time'][1..4]
         else
           binding.pry
         end

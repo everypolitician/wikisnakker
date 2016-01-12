@@ -103,3 +103,13 @@ describe 'Sitelinks' do
     assert_equal 'Movement for Democratic Change', subject.values.first.title
   end
 end
+
+describe 'snak with time precision 4' do
+  around { |test| VCR.use_cassette('enn-eesmaa', &test) }
+
+  subject { Wikisnakker::Item.find('Q11857954') }
+
+  it 'has a date of birth year' do
+    assert_equal '1946', subject.P569.value
+  end
+end
