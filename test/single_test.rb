@@ -91,3 +91,15 @@ describe 'Record with URL' do
   end
 end
 
+describe 'Sitelinks' do
+  around { |test| VCR.use_cassette('mdc', &test) }
+
+  let(:item) { Wikisnakker::Item.find('Q1146616') }
+  subject { item.sitelinks }
+
+  it 'returns sitelinks objects' do
+    assert_equal 19, subject.size
+    assert_equal 'afwiki', subject.keys.first
+    assert_equal 'Movement for Democratic Change', subject.values.first.title
+  end
+end
