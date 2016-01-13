@@ -104,12 +104,24 @@ describe 'Sitelinks' do
   end
 end
 
-describe 'snak with time precision 4' do
-  around { |test| VCR.use_cassette('enn-eesmaa', &test) }
+describe 'snak time' do
+  describe 'precision 9' do
+    around { |test| VCR.use_cassette('enn-eesmaa', &test) }
 
-  subject { Wikisnakker::Item.find('Q11857954') }
+    subject { Wikisnakker::Item.find('Q11857954') }
 
-  it 'has a date of birth year' do
-    assert_equal '1946', subject.P569.value
+    it 'has a date of birth year' do
+      assert_equal '1946', subject.P569.value
+    end
+  end
+
+  describe 'precision 10' do
+    around { |test| VCR.use_cassette('bogumil-borowski', &test) }
+
+    subject { Wikisnakker::Item.find('Q9175546') }
+
+    it 'has a date of death month' do
+      assert_equal '2014-08', subject.P570.value
+    end
   end
 end

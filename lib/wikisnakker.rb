@@ -193,8 +193,12 @@ module Wikisnakker
         case @snak['datavalue']['value']['precision']
         when 11
           @snak['datavalue']['value']['time'][1..10]
+        when 10
+          @snak['datavalue']['value']['time'][1..7]
         when 9
           @snak['datavalue']['value']['time'][1..4]
+        when 7
+          "" # Just ignore dates with century precision
         else
           warn "FIXME: Unhandled 'time' precision: #{@snak['datavalue']['value']['precision']}"
         end
