@@ -236,16 +236,20 @@ module Wikisnakker
   end
 
   class Qualifiers
+    include DynamicProperties
+
     attr_reader :snaks
 
     def initialize(qualifier_snaks)
-      @snaks ||= qualifier_snaks.map do |property_id, snaks|
-        [property_id.to_sym, snaks.map { |snak| Snak.new(snak) }]
-      end.to_h
-    end
+      qualifier_snaks.each do |property_id, snaks|
+        property "#{property_id}s".to_sym do
+          snaks.map { |s| Snak.new(s) }
+        end
 
-    def [](key)
-      snaks[key]
+        property property_id do
+          __send__("#{property_id}s").first
+        end
+      end
     end
   end
 end
