@@ -239,8 +239,10 @@ module Wikisnakker
     include DynamicProperties
 
     attr_reader :snaks
+    attr_reader :properties
 
     def initialize(qualifier_snaks)
+      @properties = qualifier_snaks.keys
       qualifier_snaks.each do |property_id, snaks|
         property "#{property_id}s".to_sym do
           snaks.map { |s| Snak.new(s) }

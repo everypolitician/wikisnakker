@@ -144,4 +144,8 @@ describe 'qualifiers' do
     assert_equal '2013-12-10', position.qualifiers[:P580].value
     assert_equal '2013-12-10', position.qualifiers['P580'].value
   end
+
+  it 'should have a list of available qualifiers' do
+    assert_equal ["P768", "P580"], position.qualifiers.properties
+  end
 end
