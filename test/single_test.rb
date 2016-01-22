@@ -139,4 +139,9 @@ describe 'qualifiers' do
   it 'should know the electoral district' do
     assert_equal 'Buenos Aires Province', position.qualifiers.P768.value.label('en')
   end
+
+  it 'should allow accessing properties using square brackets' do
+    assert_equal '2013-12-10', position.qualifiers[:P580].value
+    assert_equal '2013-12-10', position.qualifiers['P580'].value
+  end
 end

@@ -109,6 +109,10 @@ module Wikisnakker
     def property(property, &block)
       define_singleton_method(property.to_sym, &block)
     end
+
+    def [](key)
+      __send__(key)
+    end
   end
 
   class Item
@@ -142,10 +146,6 @@ module Wikisnakker
           __send__("#{property_id}s").first
         end
       end
-    end
-
-    def [](key)
-      send(key)
     end
 
     def label(lang)
