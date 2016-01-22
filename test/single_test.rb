@@ -125,3 +125,27 @@ describe 'snak time' do
     end
   end
 end
+
+describe 'qualifiers' do
+  around { |test| VCR.use_cassette('qualifiers', &test) }
+
+  let(:item) { Wikisnakker::Item.find('Q21856082') }
+  let(:position) { position = item.P39 }
+
+  it 'should know the start date' do
+    assert_equal '2013-12-10', position.qualifiers.P580.value
+  end
+
+  it 'should know the electoral district' do
+    assert_equal 'Buenos Aires Province', position.qualifiers.P768.value.label('en')
+  end
+
+  it 'should allow accessing properties using square brackets' do
+    assert_equal '2013-12-10', position.qualifiers[:P580].value
+    assert_equal '2013-12-10', position.qualifiers['P580'].value
+  end
+
+  it 'should have a list of available qualifiers' do
+    assert_equal ["P768", "P580"], position.qualifiers.properties
+  end
+end

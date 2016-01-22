@@ -94,15 +94,36 @@ module Wikisnakker
     end
   end
 
+  module DynamicProperties
+    PROPERTY_REGEX = /^P\d+s?$/
+
+    def method_missing(method_name, *arguments, &block)
+      return super unless method_name.to_s.match(PROPERTY_REGEX)
+      method_name[-1] == 's' ? [] : nil
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      method_name.to_s.match(PROPERTY_REGEX) || super
+    end
+
+    def property(property, &block)
+      define_singleton_method(property.to_sym, &block)
+    end
+
+    def [](key)
+      __send__(key)
+    end
+  end
+
   class Item
+    include DynamicProperties
+
     def self.find(ids)
       lookup = Lookup.find(ids)
       data = lookup.values
       inflated = data.map { |rd| new(rd) }
       ids.is_a?(Array) ? inflated : inflated.first
     end
-
-    PROPERTY_REGEX = /^P\d+s?$/
 
     attr_reader :id
     attr_reader :labels
@@ -117,27 +138,14 @@ module Wikisnakker
         [key, Sitelink.new(value)]
       end]
       raw['claims'].each do |property_id, claims|
-        define_singleton_method "#{property_id}s".to_sym do
+        property "#{property_id}s".to_sym do
           claims.map { |c| Claim.new(c) }
         end
 
-        define_singleton_method property_id.to_sym do
-          send("#{property_id}s").first
+        property property_id do
+          __send__("#{property_id}s").first
         end
       end
-    end
-
-    def [](key)
-      send(key)
-    end
-
-    def method_missing(method_name, *arguments, &block)
-      return super unless method_name.to_s.match(PROPERTY_REGEX)
-      method_name[-1] == 's' ? [] : nil
-    end
-
-    def respond_to_missing?(method_name, include_private = false)
-      method_name.to_s.match(PROPERTY_REGEX) || super
     end
 
     def label(lang)
@@ -160,6 +168,10 @@ module Wikisnakker
 
     def mainsnak
       @_mainsnak ||= Snak.new(@data['mainsnak'])
+    end
+
+    def qualifiers
+      Qualifiers.new(@data['qualifiers'])
     end
   end
 
@@ -220,6 +232,26 @@ module Wikisnakker
       @site = raw['site']
       @title = raw['title']
       @badges = raw['badges']
+    end
+  end
+
+  class Qualifiers
+    include DynamicProperties
+
+    attr_reader :snaks
+    attr_reader :properties
+
+    def initialize(qualifier_snaks)
+      @properties = qualifier_snaks.keys
+      qualifier_snaks.each do |property_id, snaks|
+        property "#{property_id}s".to_sym do
+          snaks.map { |s| Snak.new(s) }
+        end
+
+        property property_id do
+          __send__("#{property_id}s").first
+        end
+      end
     end
   end
 end
