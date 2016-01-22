@@ -125,3 +125,14 @@ describe 'snak time' do
     end
   end
 end
+
+describe 'qualifiers' do
+  around { |test| VCR.use_cassette('qualifiers', &test) }
+
+  subject { Wikisnakker::Item.find('Q21856082') }
+
+  it 'should know the qualifiers' do
+    position = subject.P39s.first
+    assert_equal '2013-12-10', position.qualifiers[:P580].first.value
+  end
+end

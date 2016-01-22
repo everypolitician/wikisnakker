@@ -161,6 +161,10 @@ module Wikisnakker
     def mainsnak
       @_mainsnak ||= Snak.new(@data['mainsnak'])
     end
+
+    def qualifiers
+      Qualifiers.new(@data['qualifiers'])
+    end
   end
 
   class Snak
@@ -220,6 +224,20 @@ module Wikisnakker
       @site = raw['site']
       @title = raw['title']
       @badges = raw['badges']
+    end
+  end
+
+  class Qualifiers
+    attr_reader :snaks
+
+    def initialize(qualifier_snaks)
+      @snaks ||= qualifier_snaks.map do |property_id, snaks|
+        [property_id.to_sym, snaks.map { |snak| Snak.new(snak) }]
+      end.to_h
+    end
+
+    def [](key)
+      snaks[key]
     end
   end
 end
