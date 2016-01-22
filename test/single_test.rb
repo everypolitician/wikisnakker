@@ -129,10 +129,14 @@ end
 describe 'qualifiers' do
   around { |test| VCR.use_cassette('qualifiers', &test) }
 
-  subject { Wikisnakker::Item.find('Q21856082') }
+  let(:item) { Wikisnakker::Item.find('Q21856082') }
+  let(:position) { position = item.P39 }
 
-  it 'should know the qualifiers' do
-    position = subject.P39s.first
-    assert_equal '2013-12-10', position.qualifiers[:P580].first.value
+  it 'should know the start date' do
+    assert_equal '2013-12-10', position.qualifiers.P580.value
+  end
+
+  it 'should know the electoral district' do
+    assert_equal 'Buenos Aires Province', position.qualifiers.P768.value.label('en')
   end
 end
