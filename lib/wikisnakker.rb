@@ -242,6 +242,7 @@ module Wikisnakker
     attr_reader :properties
 
     def initialize(qualifier_snaks)
+      qualifier_snaks ||= {}
       @properties = qualifier_snaks.keys
       qualifier_snaks.each do |property_id, snaks|
         property "#{property_id}s".to_sym do
