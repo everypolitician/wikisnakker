@@ -148,4 +148,12 @@ describe 'qualifiers' do
   it 'should have a list of available qualifiers' do
     assert_equal ["P768", "P580"], position.qualifiers.properties
   end
+
+  it "shouldn't error if qualifiers are missing" do
+    VCR.use_cassette('roberto_noble') do
+      roberto_noble = Wikisnakker::Item.find('Q12341')
+      position = roberto_noble.P39s.first
+      assert_equal [], position.qualifiers.properties
+    end
+  end
 end
