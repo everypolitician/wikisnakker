@@ -183,6 +183,7 @@ module Wikisnakker
     # https://www.wikidata.org/wiki/Special:ListDatatypes
     # https://www.wikidata.org/wiki/Help:Data_type
     def value
+      return if @snak['snaktype'] == 'somevalue'
       case @snak['datatype']
       when 'commonsMedia'
         # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F

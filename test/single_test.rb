@@ -157,3 +157,14 @@ describe 'qualifiers' do
     end
   end
 end
+
+describe 'snaktype' do
+  around { |test| VCR.use_cassette('snaktype', &test) }
+  let(:item) { Wikisnakker::Item.find('Q21177259') }
+
+  describe 'somevalue' do
+    it 'should return nil' do
+      assert_nil item.P569.value
+    end
+  end
+end
