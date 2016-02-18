@@ -196,6 +196,8 @@ module Wikisnakker
         Item.new(@snak['datavalue']['value'])
       when 'string'
         @snak['datavalue']['value']
+      when 'external-id'
+        @snak['datavalue']['value']
       when 'quantity'
         if @snak['datavalue']['value']['upperBound'] == @snak['datavalue']['value']['lowerBound']
           @snak['datavalue']['value']['amount'].to_i
