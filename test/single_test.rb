@@ -17,6 +17,10 @@ describe 'Single Record' do
     subject.label('zh-hant').must_equal '尤漢·帕茨'
   end
 
+  it 'should not die with missing language' do
+    subject.label('zz').must_be_nil
+  end
+
   it 'should have a birth date' do
     dob = subject.P569
     "#{dob}".must_equal '1966-08-27'
