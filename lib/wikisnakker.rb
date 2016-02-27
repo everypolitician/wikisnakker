@@ -149,6 +149,7 @@ module Wikisnakker
     end
 
     def label(lang)
+      return nil unless labels.key?(lang)
       labels[lang]['value']
     end
   end
