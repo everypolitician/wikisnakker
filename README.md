@@ -24,7 +24,7 @@ And then execute:
 
 ### Single item
 
-You can get a Wikidata item using its qualifier. For example [Douglas Adams'](https://www.wikidata.org/wiki/Q42) has the qualifier `Q42`.
+You can get a Wikidata item using its qualifier. For example [Douglas Adams](https://www.wikidata.org/wiki/Q42) has the qualifier `Q42`.
 
 ```ruby
 require 'wikisnakker'
