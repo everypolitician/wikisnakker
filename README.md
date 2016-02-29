@@ -22,7 +22,7 @@ And then execute:
 
 ## Usage
 
-This library was designed to make looking up multiple items at once quick and easy. You can pass an array of qualifiers to `Wikisnakker::Item.find`. This will return an array of `Wikisnakker::Item` instances.
+You can pass an array of qualifiers to `Wikisnakker::Item.find`. This will return an array of `Wikisnakker::Item` instances.
 
 ```ruby
 require 'wikisnakker'
