@@ -39,7 +39,7 @@ douglas_adams = Wikisnakker::Item.find('Q42')
 douglas_adams.label('en') # => "Douglas Adams"
 ```
 
-The you can lookup properties on returned items. For example `P19` is "place of birth". A `P19` is an item, so you can then call `.label()` on its return value and call further `P*` methods on it.
+Then you can lookup properties on returned items. For example `P19` is "place of birth". A `P19` is an item, so you can then call `.label()` on its return value and call further `P*` methods on it.
 
 ```ruby
 cambridge = douglas_adams.P19.value
