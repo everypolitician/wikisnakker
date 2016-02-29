@@ -22,9 +22,7 @@ And then execute:
 
 ## Usage
 
-### Multiple items
-
-The main reason you might want to use this library is to lookup multiple items at once. You can pass an array of qualifiers to `Wikisnakker::Item.find`.
+This library was designed to make looking up multiple items at once quick and easy. You can pass an array of qualifiers to `Wikisnakker::Item.find`. This will return an array of `Wikisnakker::Item` instances.
 
 ```ruby
 require 'wikisnakker'
@@ -33,9 +31,7 @@ items.map { |item| item.label('en') } # => ["Earth", "Mount Everest", "Big Ben"]
 items.map { |item| item.P18.value } # => ["https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", "https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg", "https://upload.wikimedia.org/wikipedia/commons/7/78/Big-ben-1858.jpg"]
 ```
 
-### Single item
-
-You can get a Wikidata item using its qualifier. For example [Douglas Adams](https://www.wikidata.org/wiki/Q42) has the qualifier `Q42`.
+If you pass a string to `Wikisnakker::Item.find` then it will return a single `Wikisnakker::Item` instance:
 
 ```ruby
 require 'wikisnakker'
@@ -43,7 +39,7 @@ douglas_adams = Wikisnakker::Item.find('Q42')
 douglas_adams.label('en') # => "Douglas Adams"
 ```
 
-The you can lookup properties on the returned item. For example `P19` is "place of birth". A `P19` is an item, so you can then call `.label()` on its return value and call further `P*` methods on it.
+The you can lookup properties on returned items. For example `P19` is "place of birth". A `P19` is an item, so you can then call `.label()` on its return value and call further `P*` methods on it.
 
 ```ruby
 cambridge = douglas_adams.P19.value
