@@ -57,6 +57,7 @@ Sometimes a property will have multiple values, for example `P735`, which is "gi
 
 ```ruby
 douglas_adams.P735s.map { |given_name| given_name.value.label('en') }
+# => ["Douglas", "Noel"]
 ```
 
 ## Development
