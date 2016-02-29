@@ -13,6 +13,10 @@ describe 'Single Record' do
     subject.label('en').must_equal 'Juhan Parts'
   end
 
+  it 'should stringify as its name' do
+    subject.to_s.must_equal 'Juhan Parts'
+  end
+
   it 'should cope with extended language names' do
     subject.label('zh-hant').must_equal '尤漢·帕茨'
   end
@@ -142,6 +146,11 @@ describe 'qualifiers' do
 
   it 'should know the electoral district' do
     assert_equal 'Buenos Aires Province', position.qualifiers.P768.value.label('en')
+  end
+
+  it 'should stringify its properties' do
+    assert_equal 'Buenos Aires Province', position.qualifiers.P768.value.to_s
+    assert_equal '2013-12-10', position.qualifiers.P580.value.to_s
   end
 
   it 'should allow accessing properties using square brackets' do

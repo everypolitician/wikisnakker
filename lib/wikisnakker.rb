@@ -148,6 +148,11 @@ module Wikisnakker
       end
     end
 
+    # TODO: have an option that defaults to a different language 
+    def to_s
+      labels.key?('en') ? labels['en']['value'] : @id
+    end
+
     def label(lang)
       return nil unless labels.key?(lang)
       labels[lang]['value']
