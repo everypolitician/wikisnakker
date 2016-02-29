@@ -22,6 +22,17 @@ And then execute:
 
 ## Usage
 
+### Multiple items
+
+The main reason you might want to use this library is to lookup multiple items at once. You can pass an array of qualifiers to `Wikisnakker::Item.find`.
+
+```ruby
+require 'wikisnakker'
+items = Wikisnakker::Item.find(['Q2', 'Q513', 'Q41225'])
+items.map { |item| item.label('en') } # => ["Earth", "Mount Everest", "Big Ben"]
+items.map { |item| item.P18.value } # => ["https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", "https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg", "https://upload.wikimedia.org/wikipedia/commons/7/78/Big-ben-1858.jpg"]
+```
+
 ### Single item
 
 You can get a Wikidata item using its qualifier. For example [Douglas Adams](https://www.wikidata.org/wiki/Q42) has the qualifier `Q42`.
@@ -44,17 +55,6 @@ cambridge.label('en') # => "Cambridge"
 ```ruby
 douglas_adams.P569.value # => "1952-03-11"
 douglas_adams.P570.value # => "2001-05-11"
-```
-
-### Multiple items
-
-The main reason you might want to use this library is to lookup multiple items at once. You can pass an array of qualifiers to `Wikisnakker::Item.find`.
-
-```ruby
-require 'wikisnakker'
-items = Wikisnakker::Item.find(['Q2', 'Q513', 'Q41225'])
-items.map { |item| item.label('en') } # => ["Earth", "Mount Everest", "Big Ben"]
-items.map { |item| item.P18.value } # => ["https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", "https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg", "https://upload.wikimedia.org/wikipedia/commons/7/78/Big-ben-1858.jpg"]
 ```
 
 ## Development
