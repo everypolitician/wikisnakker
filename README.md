@@ -53,6 +53,12 @@ douglas_adams.P569.value # => "1952-03-11"
 douglas_adams.P570.value # => "2001-05-11"
 ```
 
+Sometimes a property will have multiple values, for example `P735`, which is "given names". In this case you can call `P735s` on the `Wikisnakker::Item` instance to get an array back:
+
+```ruby
+douglas_adams.P735s.map { |given_name| given_name.value.label('en') }
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
