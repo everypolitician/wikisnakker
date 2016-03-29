@@ -187,3 +187,26 @@ describe 'snaktype' do
     end
   end
 end
+
+describe 'aliases' do
+  around { |test| VCR.use_cassette('aliases', &test) }
+  let(:item) { Wikisnakker::Item.find('Q2036942') }
+
+  it 'should return aliases for the given language' do
+    item.aliases('en').must_equal(['Rafael Edward Cruz'])
+    item.aliases('ru').must_equal(['Тед Круз'])
+  end
+
+  it 'should return an empty array when there are no aliases for language' do
+    item.aliases('de').must_equal([])
+  end
+
+  it 'has a list of all aliases' do
+    expected = {
+      'ru' => [{ 'language' => 'ru', 'value' => "Тед Круз" }],
+      'en' => [{ 'language' => 'en', 'value' => 'Rafael Edward Cruz' }],
+      'es' => [{ 'language' => 'es', 'value' => 'Rafael Edward Cruz' }]
+    }
+    item.all_aliases.must_equal(expected)
+  end
+end

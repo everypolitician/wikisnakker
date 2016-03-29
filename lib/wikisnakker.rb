@@ -129,10 +129,12 @@ module Wikisnakker
     attr_reader :labels
     attr_reader :properties
     attr_reader :sitelinks
+    attr_reader :all_aliases
 
     def initialize(raw)
       @id = raw['title']
       @labels = raw['labels']
+      @all_aliases = raw['aliases']
       @properties = raw['claims'].keys
       @sitelinks = Hash[raw['sitelinks'].map do |key, value|
         [key, Sitelink.new(value)]
@@ -156,6 +158,11 @@ module Wikisnakker
     def label(lang)
       return nil unless labels.key?(lang)
       labels[lang]['value']
+    end
+
+    def aliases(lang)
+      return [] unless all_aliases.key?(lang)
+      all_aliases[lang].map { |a| a['value'] }
     end
   end
 

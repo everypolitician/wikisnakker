@@ -60,6 +60,13 @@ douglas_adams.P735s.map { |given_name| given_name.value.label('en') }
 # => ["Douglas", "Noel"]
 ```
 
+You can also lookup aliases in a certain language for an item:
+
+```ruby
+douglas_adams.aliases('en')
+# => ["Douglas Noël Adams", "Douglas Noel Adams"]
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
