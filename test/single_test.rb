@@ -200,4 +200,13 @@ describe 'aliases' do
   it 'should return an empty array when there are no aliases for language' do
     item.aliases('de').must_equal([])
   end
+
+  it 'has a list of all aliases' do
+    expected = {
+      'ru' => [{ 'language' => 'ru', 'value' => "Тед Круз" }],
+      'en' => [{ 'language' => 'en', 'value' => 'Rafael Edward Cruz' }],
+      'es' => [{ 'language' => 'es', 'value' => 'Rafael Edward Cruz' }]
+    }
+    item.all_aliases.must_equal(expected)
+  end
 end
