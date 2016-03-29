@@ -133,6 +133,7 @@ module Wikisnakker
     def initialize(raw)
       @id = raw['title']
       @labels = raw['labels']
+      @aliases = raw['aliases']
       @properties = raw['claims'].keys
       @sitelinks = Hash[raw['sitelinks'].map do |key, value|
         [key, Sitelink.new(value)]
@@ -156,6 +157,11 @@ module Wikisnakker
     def label(lang)
       return nil unless labels.key?(lang)
       labels[lang]['value']
+    end
+
+    def aliases(lang)
+      return [] unless @aliases.key?(lang)
+      @aliases[lang].map { |a| a['value'] }
     end
   end
 
