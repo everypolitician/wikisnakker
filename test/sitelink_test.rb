@@ -3,9 +3,9 @@ require 'test_helper'
 describe Wikisnakker::Sitelink do
   subject do
     Wikisnakker::Sitelink.new(
-      'site' => 'commonswiki',
-      'title' => 'Category:Jaak Aaviksoo',
-      'badges' => []
+      site: 'commonswiki',
+      title: 'Category:Jaak Aaviksoo',
+      badges: []
     )
   end
 
