@@ -21,7 +21,7 @@ module Wikisnakker
       entities = ids.each_slice(50).map do |id_slice|
         get(id_slice)['entities']
       end
-      @entities = entities.reduce(&:merge)
+      @entities = entities.reduce(&:merge) || {}
     end
 
     def properties
