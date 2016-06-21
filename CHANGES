@@ -1,4 +1,30 @@
 
+0.4.1  2016-05-16
+  - Handle lookups with no IDs
+
+0.4.0  2016-03-29
+  - Add an `aliases` method
+
+0.3.0  2016-02-29
+  - Stringify to the English label
+
+0.2.1  2016-02-27
+  - Handle asking for a label that doesn't exist
+
+0.2.0  2016-02-18
+  - Handle Wikidata's new 'external-id' type
+
+0.1.0  2016-01-22
+  - Expose the qualifiers for a claim
+
+0.0.3  2016-01-13
+  - Expose the claims for each item 
+  - Add a `sitelinks` property
+  - Handle more imprecise date formats
+
+0.0.2  2015-11-27
+  - Add ability to resolve 'url' datatype
+
 0.0.1  2015-10-17
   - initial version
 
