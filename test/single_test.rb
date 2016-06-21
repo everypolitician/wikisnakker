@@ -25,9 +25,16 @@ describe 'Single Record' do
     subject.label('zz').must_be_nil
   end
 
-  it 'should have a birth date' do
-    dob = subject.P569
-    "#{dob}".must_equal '1966-08-27'
+  it 'should have a description in English' do
+    subject.description('en').must_equal 'Prime Minister of Estonia'
+  end
+
+  it 'should have a description in German' do
+    subject.description('de').must_equal 'estnischer Politiker'
+  end
+
+  it 'should have no description in Swedish' do
+    subject.description('se').must_be_nil
   end
 
   it 'should be a politician' do
