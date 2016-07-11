@@ -193,6 +193,10 @@ module Wikisnakker
     def qualifiers
       Qualifiers.new(@data[:qualifiers])
     end
+
+    def rank
+      @data['rank']
+    end
   end
 
   class Snak
