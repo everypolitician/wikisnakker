@@ -143,6 +143,9 @@ module Wikisnakker
       end]
       raw[:claims].each do |property_id, claims|
         property "#{property_id}s".to_sym do
+          # A claim's rank can be either preferred, normal or deprecated. We sort them by
+          # rank in reverse order because lexicographic ordering happens to work for the
+          # known ranks.
           claims.map { |c| Claim.new(c) }.sort_by(&:rank).reverse
         end
 
