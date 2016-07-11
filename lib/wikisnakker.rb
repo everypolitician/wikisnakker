@@ -143,7 +143,7 @@ module Wikisnakker
       end]
       raw[:claims].each do |property_id, claims|
         property "#{property_id}s".to_sym do
-          claims.map { |c| Claim.new(c) }.sort { |a, b| b.rank <=> a.rank }
+          claims.map { |c| Claim.new(c) }.sort_by(&:rank).reverse
         end
 
         property property_id do
