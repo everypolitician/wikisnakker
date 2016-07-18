@@ -19,13 +19,13 @@ module Wikisnakker
       ids = ids.flatten.compact.uniq
       @used_props = Set.new
       entities = ids.each_slice(50).map do |id_slice|
-        get(id_slice)['entities']
+        get(id_slice)[:entities]
       end
       @entities = entities.reduce(&:merge) || {}
     end
 
     def properties
-      @used_props.to_a.map { |e| "Q#{e}" }
+      @used_props.to_a.map { |e| "Q#{e}".to_sym }
     end
 
     def values
@@ -38,7 +38,7 @@ module Wikisnakker
 
     def populate_with(properties)
       each_wikibase_entitiyid(@entities) do |entityid|
-        entityid['value'] = properties["Q#{entityid['value']['numeric-id']}"]
+        entityid[:value] = properties["Q#{entityid[:value][:"numeric-id"]}".to_sym]
       end
     end
 
@@ -51,7 +51,7 @@ module Wikisnakker
         format: 'json'
       }
       url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(query)
-      json = JSON.parse(open(url).read)
+      json = JSON.parse(open(url).read, symbolize_names: true)
       save_wikibase_entityids(json)
       json
     end
@@ -63,13 +63,13 @@ module Wikisnakker
     # encounter and then resolve them later in '#populate_with'.
     def save_wikibase_entityids(json)
       each_wikibase_entitiyid(json) do |entityid|
-        @used_props << entityid['value']['numeric-id']
+        @used_props << entityid[:value][:'numeric-id']
       end
     end
 
     def each_wikibase_entitiyid(obj)
       recurse_proc(obj) do |result|
-        next unless result.is_a?(Hash) && result['type'] == 'wikibase-entityid'
+        next unless result.is_a?(Hash) && result[:type] == 'wikibase-entityid'
         yield(result)
       end
     end
@@ -133,15 +133,15 @@ module Wikisnakker
     attr_reader :all_aliases
 
     def initialize(raw)
-      @id = raw['title']
-      @labels = raw['labels']
-      @descriptions = raw['descriptions'] || {}
-      @all_aliases = raw['aliases']
-      @properties = raw['claims'].keys
-      @sitelinks = Hash[raw['sitelinks'].map do |key, value|
-        [key, Sitelink.new(value)]
+      @id = raw[:title]
+      @labels = raw[:labels]
+      @descriptions = raw[:descriptions] || {}
+      @all_aliases = raw[:aliases]
+      @properties = raw[:claims].keys
+      @sitelinks = Hash[raw[:sitelinks].map do |key, value|
+        [key.to_sym, Sitelink.new(value)]
       end]
-      raw['claims'].each do |property_id, claims|
+      raw[:claims].each do |property_id, claims|
         property "#{property_id}s".to_sym do
           claims.map { |c| Claim.new(c) }
         end
@@ -154,22 +154,22 @@ module Wikisnakker
 
     # TODO: have an option that defaults to a different language 
     def to_s
-      labels.key?('en') ? labels['en']['value'] : @id
+      labels.key?(:en) ? labels[:en][:value] : @id
     end
 
     def label(lang)
-      return nil unless labels.key?(lang)
-      labels[lang]['value']
+      return nil unless labels.key?(lang.to_sym)
+      labels[lang.to_sym][:value]
     end
 
     def description(lang)
-      return nil unless descriptions.key?(lang)
-      descriptions[lang]['value']
+      return nil unless descriptions.key?(lang.to_sym)
+      descriptions[lang.to_sym][:value]
     end
 
     def aliases(lang)
-      return [] unless all_aliases.key?(lang)
-      all_aliases[lang].map { |a| a['value'] }
+      return [] unless all_aliases.key?(lang.to_sym)
+      all_aliases[lang.to_sym].map { |a| a[:value] }
     end
   end
 
@@ -187,11 +187,11 @@ module Wikisnakker
     end
 
     def mainsnak
-      @_mainsnak ||= Snak.new(@data['mainsnak'])
+      @_mainsnak ||= Snak.new(@data[:mainsnak])
     end
 
     def qualifiers
-      Qualifiers.new(@data['qualifiers'])
+      Qualifiers.new(@data[:qualifiers])
     end
   end
 
@@ -203,44 +203,44 @@ module Wikisnakker
     # https://www.wikidata.org/wiki/Special:ListDatatypes
     # https://www.wikidata.org/wiki/Help:Data_type
     def value
-      return if %w(somevalue novalue).include?(@snak['snaktype'])
-      case @snak['datatype']
+      return if %w(somevalue novalue).include?(@snak[:snaktype])
+      case @snak[:datatype]
       when 'commonsMedia'
         # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
         # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
-        val = @snak['datavalue']['value'].gsub(' ', '_')
+        val = @snak[:datavalue][:value].gsub(' ', '_')
         md5 = Digest::MD5.hexdigest val
         "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{val}"
       when 'wikibase-item'
         # "Q%s" % @snak["datavalue"]["value"]["numeric-id"]
-        Item.new(@snak['datavalue']['value'])
+        Item.new(@snak[:datavalue][:value])
       when 'string'
-        @snak['datavalue']['value']
+        @snak[:datavalue][:value]
       when 'external-id'
-        @snak['datavalue']['value']
+        @snak[:datavalue][:value]
       when 'quantity'
-        if @snak['datavalue']['value']['upperBound'] == @snak['datavalue']['value']['lowerBound']
-          @snak['datavalue']['value']['amount'].to_i
+        if @snak[:datavalue][:value][:upperBound] == @snak[:datavalue][:value][:lowerBound]
+          @snak[:datavalue][:value][:amount].to_i
         else
-          warn "FIXME: Unhandled 'quantity': #{@snak['datavalue']['value']}"
+          warn "FIXME: Unhandled 'quantity': #{@snak[:datavalue][:value]}"
         end
       when 'time'
-        case @snak['datavalue']['value']['precision']
+        case @snak[:datavalue][:value][:precision]
         when 11
-          @snak['datavalue']['value']['time'][1..10]
+          @snak[:datavalue][:value][:time][1..10]
         when 10
-          @snak['datavalue']['value']['time'][1..7]
+          @snak[:datavalue][:value][:time][1..7]
         when 9
-          @snak['datavalue']['value']['time'][1..4]
+          @snak[:datavalue][:value][:time][1..4]
         when 7
           "" # Just ignore dates with century precision
         else
-          warn "FIXME: Unhandled 'time' precision: #{@snak['datavalue']['value']['precision']}"
+          warn "FIXME: Unhandled 'time' precision: #{@snak[:datavalue][:value][:precision]}"
         end
       when 'url'
-        @snak['datavalue']['value']
+        @snak[:datavalue][:value]
       else
-        warn "FIXME: '#{@snak['datatype']}' is not implemented yet in Wikisnakker::Snak#value. Defaulting to empty string. #{@snak['datavalue']['value']}"
+        warn "FIXME: '#{@snak[:datatype]}' is not implemented yet in Wikisnakker::Snak#value. Defaulting to empty string. #{@snak[:datavalue][:value]}"
         ''
       end
     end
@@ -252,9 +252,9 @@ module Wikisnakker
     attr_reader :badges
 
     def initialize(raw)
-      @site = raw['site']
-      @title = raw['title']
-      @badges = raw['badges']
+      @site = raw[:site]
+      @title = raw[:title]
+      @badges = raw[:badges]
     end
   end
 

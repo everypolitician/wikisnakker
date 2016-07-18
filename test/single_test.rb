@@ -98,7 +98,7 @@ describe 'Record with URL' do
   end
 
   it 'should have a list of properties' do
-    subject.properties.must_equal ["P31", "P646", "P17", "P571", "P159", "P1142", "P856", "P154", "P488", "P214"]
+    subject.properties.must_equal [:P31, :P646, :P17, :P571, :P159, :P1142, :P856, :P154, :P488, :P214]
   end
 
   it 'should allow accessing properties using square brackets' do
@@ -114,7 +114,7 @@ describe 'Sitelinks' do
 
   it 'returns sitelinks objects' do
     assert_equal 19, subject.size
-    assert_equal 'afwiki', subject.keys.first
+    assert_equal :afwiki, subject.keys.first
     assert_equal 'Movement for Democratic Change', subject.values.first.title
   end
 end
@@ -166,7 +166,7 @@ describe 'qualifiers' do
   end
 
   it 'should have a list of available qualifiers' do
-    assert_equal ["P768", "P580"], position.qualifiers.properties
+    assert_equal [:P768, :P580], position.qualifiers.properties
   end
 
   it "shouldn't error if qualifiers are missing" do
@@ -210,9 +210,9 @@ describe 'aliases' do
 
   it 'has a list of all aliases' do
     expected = {
-      'ru' => [{ 'language' => 'ru', 'value' => "Тед Круз" }],
-      'en' => [{ 'language' => 'en', 'value' => 'Rafael Edward Cruz' }],
-      'es' => [{ 'language' => 'es', 'value' => 'Rafael Edward Cruz' }]
+      ru: [{ language: 'ru', value: "Тед Круз" }],
+      en: [{ language: 'en', value: 'Rafael Edward Cruz' }],
+      es: [{ language: 'es', value: 'Rafael Edward Cruz' }]
     }
     item.all_aliases.must_equal(expected)
   end
