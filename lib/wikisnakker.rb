@@ -141,12 +141,12 @@ module Wikisnakker
       @sitelinks = Hash[raw[:sitelinks].map do |key, value|
         [key.to_sym, Sitelink.new(value)]
       end]
-      raw['claims'].each do |property_id, claims|
+      raw[:claims].each do |property_id, claims|
         define_property_method "#{property_id}s".to_sym do
           # A claim's rank can be either preferred, normal or deprecated. We sort them by
           # rank in reverse order because lexicographic ordering happens to work for the
           # known ranks.
-          claims.map { |c| Claim.new(c) }.group_by(&:rank).sort_by { |r, _| r.reverse }.flat_map { |_, cs| cs }
+          claims.map { |c| Claim.new(c) }.group_by(&:rank).sort.reverse.to_h.values.flatten
         end
 
         define_property_method property_id do
@@ -198,7 +198,7 @@ module Wikisnakker
     end
 
     def rank
-      @data['rank']
+      @data[:rank]
     end
   end
 
