@@ -146,7 +146,7 @@ module Wikisnakker
           # A claim's rank can be either preferred, normal or deprecated. We sort them by
           # rank in reverse order because lexicographic ordering happens to work for the
           # known ranks.
-          claims.map { |c| Claim.new(c) }.group_by(&:rank).sort.reverse.to_h.values.flatten
+          claims.map { |c| Claim.new(c) }.group_by(&:rank).sort.reverse.map(&:last).flatten
         end
 
         define_property_method property_id do
