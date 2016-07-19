@@ -106,7 +106,7 @@ module Wikisnakker
       method_name.to_s.match(PROPERTY_REGEX) || super
     end
 
-    def property(property, &block)
+    def define_property_method(property, &block)
       define_singleton_method(property.to_sym, &block)
     end
 
@@ -142,11 +142,14 @@ module Wikisnakker
         [key.to_sym, Sitelink.new(value)]
       end]
       raw[:claims].each do |property_id, claims|
-        property "#{property_id}s".to_sym do
-          claims.map { |c| Claim.new(c) }
+        define_property_method "#{property_id}s".to_sym do
+          # A claim's rank can be either preferred, normal or deprecated. We sort them by
+          # rank in reverse order because lexicographic ordering happens to work for the
+          # known ranks.
+          claims.map { |c| Claim.new(c) }.group_by(&:rank).sort.reverse.map(&:last).flatten
         end
 
-        property property_id do
+        define_property_method property_id do
           __send__("#{property_id}s").first
         end
       end
@@ -192,6 +195,10 @@ module Wikisnakker
 
     def qualifiers
       Qualifiers.new(@data[:qualifiers])
+    end
+
+    def rank
+      @data[:rank]
     end
   end
 
@@ -268,11 +275,11 @@ module Wikisnakker
       qualifier_snaks ||= {}
       @properties = qualifier_snaks.keys
       qualifier_snaks.each do |property_id, snaks|
-        property "#{property_id}s".to_sym do
+        define_property_method "#{property_id}s".to_sym do
           snaks.map { |s| Snak.new(s) }
         end
 
-        property property_id do
+        define_property_method property_id do
           __send__("#{property_id}s").first
         end
       end
