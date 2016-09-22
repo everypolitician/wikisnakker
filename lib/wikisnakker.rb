@@ -121,7 +121,7 @@ module Wikisnakker
     def self.find(ids)
       lookup = Lookup.find(ids)
       data = lookup.values
-      inflated = data.map { |rd| new(rd) }
+      inflated = data.reject { |d| d[:missing] == '' }.map { |rd| new(rd) }
       ids.is_a?(Array) ? inflated : inflated.first
     end
 
