@@ -155,7 +155,7 @@ module Wikisnakker
       end
     end
 
-    # TODO: have an option that defaults to a different language 
+    # TODO: have an option that defaults to a different language
     def to_s
       labels.key?(:en) ? labels[:en][:value] : @id
     end
@@ -215,7 +215,7 @@ module Wikisnakker
       when 'commonsMedia'
         # https://commons.wikimedia.org/wiki/Commons:FAQ#What_are_the_strangely_named_components_in_file_paths.3F
         # commons = 'https://commons.wikimedia.org/wiki/File:%s' % @snak["datavalue"]["value"]
-        val = @snak[:datavalue][:value].gsub(' ', '_')
+        val = @snak[:datavalue][:value].tr(' ', '_')
         md5 = Digest::MD5.hexdigest val
         "https://upload.wikimedia.org/wikipedia/commons/#{md5[0]}/#{md5[0..1]}/#{val}"
       when 'wikibase-item'
@@ -240,7 +240,7 @@ module Wikisnakker
         when 9
           @snak[:datavalue][:value][:time][1..4]
         when 7
-          "" # Just ignore dates with century precision
+          '' # Just ignore dates with century precision
         else
           warn "FIXME: Unhandled 'time' precision: #{@snak[:datavalue][:value][:precision]}"
         end
