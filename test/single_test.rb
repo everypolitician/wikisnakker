@@ -145,7 +145,7 @@ describe 'qualifiers' do
   around { |test| VCR.use_cassette('qualifiers', &test) }
 
   let(:item) { Wikisnakker::Item.find('Q21856082') }
-  let(:position) { position = item.P39 }
+  let(:position) { item.P39 }
 
   it 'should know the start date' do
     assert_equal '2013-12-10', position.qualifiers.P580.value
