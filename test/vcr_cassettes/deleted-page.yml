@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q21974469
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 22 Sep 2016 12:08:45 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '76'
+      Connection:
+      - keep-alive
+      Server:
+      - mw1285.eqiad.wmnet
+      X-Powered-By:
+      - HHVM/3.12.7
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      P3p:
+      - CP="This is not a P3P policy! See https://www.wikidata.org/wiki/Special:CentralAutoLogin/P3P
+        for more info."
+      X-Frame-Options:
+      - DENY
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Backend-Timing:
+      - D=121444 t=1474546125105157
+      X-Varnish:
+      - 2766530965, 2512732768, 2164619157
+      Via:
+      - 1.1 varnish, 1.1 varnish, 1.1 varnish
+      Accept-Ranges:
+      - bytes
+      Age:
+      - '0'
+      X-Cache:
+      - cp1054 pass, cp3042 pass, cp3033 pass
+      X-Cache-Status:
+      - pass
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Set-Cookie:
+      - GeoIP=GB:ENG:Bristol:51.45:-2.58:v4; Path=/; secure; Domain=.wikidata.org
+      - WMF-Last-Access=22-Sep-2016;Path=/;HttpOnly;secure;Expires=Mon, 24 Oct 2016
+        12:00:00 GMT
+      X-Analytics:
+      - ns=-1;special=Badtitle;https=1;nocookies=1
+      X-Client-Ip:
+      - 82.37.235.135
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entities":{"Q21974469":{"id":"Q21974469","missing":""}},"success":1}'
+    http_version: 
+  recorded_at: Thu, 22 Sep 2016 12:08:45 GMT
+recorded_with: VCR 3.0.3

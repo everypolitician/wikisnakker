@@ -217,3 +217,11 @@ describe 'aliases' do
     item.all_aliases.must_equal(expected)
   end
 end
+
+describe 'deleted pages' do
+  around { |test| VCR.use_cassette('deleted-page', &test) }
+
+  it 'should return nil' do
+    Wikisnakker::Item.find('Q21974469').must_be_nil
+  end
+end
