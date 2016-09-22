@@ -1,3 +1,8 @@
+0.7.0  2016-09-22
+
+  - Fixed: Retrieving a deleted page (such as https://www.wikidata.org/wiki/Q21974469)
+    no longer causes an error. https://github.com/everypolitician/wikisnakker/pull/47
+
 0.6.0  2016-07-18
   - Switch to using `symbolize_names` option when parsing JSON to keep memory usage down.
 
