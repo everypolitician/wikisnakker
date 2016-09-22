@@ -14,8 +14,8 @@ describe 'fields ordered by rank' do
           { rank: 'normal', mainsnak: { datatype: 'string', datavalue: { value: 'normal rank 1' } } },
           { rank: 'normal', mainsnak: { datatype: 'string', datavalue: { value: 'normal rank 2' } } },
           { rank: 'preferred', mainsnak: { datatype: 'string', datavalue: { value: 'preferred rank' } } },
-          { rank: 'deprecated', mainsnak: { datatype: 'string', datavalue: { value: 'deprecated rank' } } },
-        ],
+          { rank: 'deprecated', mainsnak: { datatype: 'string', datavalue: { value: 'deprecated rank' } } }
+        ]
       }
     )
     item.P1.value.must_equal('preferred rank')

@@ -210,7 +210,7 @@ describe 'aliases' do
 
   it 'has a list of all aliases' do
     expected = {
-      ru: [{ language: 'ru', value: "Тед Круз" }],
+      ru: [{ language: 'ru', value: 'Тед Круз' }],
       en: [{ language: 'en', value: 'Rafael Edward Cruz' }],
       es: [{ language: 'es', value: 'Rafael Edward Cruz' }]
     }
