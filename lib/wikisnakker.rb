@@ -68,7 +68,7 @@ module Wikisnakker
 
     def each_wikibase_entitiyid(obj)
       recurse_proc(obj) do |result|
-        next unless result.is_a?(Hash) && result[:type] == 'wikibase-entityid'
+        next unless result.is_a?(Hash) && result[:type] == 'wikibase-entityid'.freeze
         yield(result)
       end
     end
