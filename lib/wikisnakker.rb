@@ -2,7 +2,7 @@ require 'wikisnakker/version'
 
 require 'digest/md5'
 require 'open-uri'
-require 'json'
+require 'yajl'
 require 'set'
 
 module Wikisnakker
@@ -50,7 +50,7 @@ module Wikisnakker
         format: 'json'
       }
       url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(query)
-      json = JSON.parse(open(url).read, symbolize_names: true)
+      json = Yajl::Parser.parse(open(url).read, symbolize_keys: true)
       save_wikibase_entityids(json)
       json
     end
