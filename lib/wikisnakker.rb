@@ -50,7 +50,9 @@ module Wikisnakker
         format: 'json'
       }
       url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(query)
-      json = JSON.parse(open(url).read, symbolize_names: true)
+      raw_json = open(url).read
+      warn "wikisnakker-json: bytes=#{raw_json.bytesize} url=#{url}"
+      json = JSON.parse(raw_json, symbolize_names: true)
       save_wikibase_entityids(json)
       json
     end
