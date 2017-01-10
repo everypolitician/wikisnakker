@@ -1,3 +1,7 @@
+0.8.0  2017-01-06
+  - Switch to using YAJL to parse the JSON from Wikidata. This greatly
+    reduces memory usage.
+
 0.7.0  2016-09-22
 
   - Fixed: Retrieving a deleted page (such as https://www.wikidata.org/wiki/Q21974469)
