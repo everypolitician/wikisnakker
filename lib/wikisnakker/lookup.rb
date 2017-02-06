@@ -90,7 +90,7 @@ module Wikisnakker
     end
 
     def json
-      Yajl::Parser.parse(open(url), symbolize_keys: true)
+      FancyJson.new(Yajl::Parser.parse(open(url), symbolize_keys: true)).expanded
     end
 
     private
@@ -111,6 +111,16 @@ module Wikisnakker
 
     def url
       'https://www.wikidata.org/w/api.php?' + query_string
+    end
+  end
+
+  class FancyJson
+    def initialize(json)
+      @json = json
+    end
+
+    def expanded
+      @json
     end
   end
 end
