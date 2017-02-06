@@ -1,3 +1,7 @@
+0.9.0  2017-02-06
+  — Calculate data at run time via missing_method, rather than
+    generating singleton methods, to reduce memory usage.
+
 0.8.0  2017-01-06
   - Switch to using YAJL to parse the JSON from Wikidata. This greatly
     reduces memory usage.
