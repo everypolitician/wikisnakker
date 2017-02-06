@@ -25,7 +25,7 @@ module Wikisnakker
     end
 
     def values
-      @values ||= @entities.values
+      @entities.values
     end
 
     def [](key)
