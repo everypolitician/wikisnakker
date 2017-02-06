@@ -12,12 +12,9 @@ module Wikisnakker
     end
 
     def initialize(*ids)
-      ids = ids.flatten.compact.uniq
       @used_props = Set.new
-      entities = ids.each_slice(50).map do |id_slice|
-        get(id_slice)[:entities]
-      end
-      @entities = entities.reduce(&:merge) || {}
+      @ids = ids.flatten.compact.uniq
+      @entities = @ids.each_slice(50).map { |slice| get(slice)[:entities] }.reduce(&:merge) || {}
     end
 
     def properties
@@ -39,6 +36,8 @@ module Wikisnakker
     end
 
     private
+
+    attr_reader :ids
 
     def get(*ids)
       json = Query.new(ids).json
