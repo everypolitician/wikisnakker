@@ -41,13 +41,7 @@ module Wikisnakker
     private
 
     def get(*ids)
-      query = {
-        action: 'wbgetentities',
-        ids: ids.flatten.join('|'),
-        format: 'json'
-      }
-      url = 'https://www.wikidata.org/w/api.php?' + URI.encode_www_form(query)
-      json = Yajl::Parser.parse(open(url), symbolize_keys: true)
+      json = Query.new(ids).json
       save_wikibase_entityids(json)
       json
     end
@@ -87,6 +81,36 @@ module Wikisnakker
       else
         proc.call result
       end
+    end
+  end
+
+  class Query
+    def initialize(ids)
+      @ids = ids
+    end
+
+    def json
+      Yajl::Parser.parse(open(url), symbolize_keys: true)
+    end
+
+    private
+
+    attr_reader :ids
+
+    def query_string
+      URI.encode_www_form(query_hash)
+    end
+
+    def query_hash
+      {
+        action: 'wbgetentities',
+        ids: ids.flatten.join('|'),
+        format: 'json'
+      }
+    end
+
+    def url
+      'https://www.wikidata.org/w/api.php?' + query_string
     end
   end
 end
