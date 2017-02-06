@@ -1,7 +1,5 @@
 module Wikisnakker
   class Item
-    include DynamicProperties
-
     def self.find(ids)
       lookup = Lookup.find(ids)
       data = lookup.values.reject { |d| d[:missing] == '' }
@@ -9,34 +7,61 @@ module Wikisnakker
       ids.is_a?(Array) ? inflated : inflated.first
     end
 
-    attr_reader :id
-    attr_reader :labels
-    attr_reader :descriptions
-    attr_reader :properties
-    attr_reader :sitelinks
-    attr_reader :all_aliases
-
     def initialize(raw)
-      @id = raw[:title]
-      @labels = raw[:labels]
-      @descriptions = raw[:descriptions] || {}
-      @all_aliases = raw[:aliases]
-      @properties = raw[:claims].keys
-      @sitelinks = Hash[raw[:sitelinks].map do |key, value|
+      @raw = raw
+    end
+
+    PROPERTY_REGEX = /^(P\d+)(s?)$/
+
+    def method_missing(method_name, *arguments, &block)
+      pid, plural = method_name.to_s.scan(PROPERTY_REGEX).flatten
+      return super unless pid
+      plural.empty? ? first_property(pid) : property(pid)
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      method_name.to_s.match(PROPERTY_REGEX) || super
+    end
+
+    def [](key)
+      __send__(key)
+    end
+
+    def property(pid)
+      # A claim's rank can be either preferred, normal or deprecated. We sort them by
+      # rank in reverse order because lexicographic ordering happens to work for the
+      # known ranks.
+      raw[:claims][pid.to_sym].to_a.map { |c| Claim.new(c) }.group_by(&:rank).sort.reverse.map(&:last).flatten
+    end
+
+    def first_property(pid)
+      property(pid).first
+    end
+
+    def id
+      raw[:id]
+    end
+
+    def labels
+      raw[:labels]
+    end
+
+    def descriptions
+      raw[:descriptions] || {}
+    end
+
+    def all_aliases
+      raw[:aliases]
+    end
+
+    def properties
+      raw[:claims].keys
+    end
+
+    def sitelinks
+      Hash[raw[:sitelinks].map do |key, value|
         [key.to_sym, Sitelink.new(value)]
       end]
-      raw[:claims].each do |property_id, claims|
-        define_property_method "#{property_id}s".to_sym do
-          # A claim's rank can be either preferred, normal or deprecated. We sort them by
-          # rank in reverse order because lexicographic ordering happens to work for the
-          # known ranks.
-          claims.map { |c| Claim.new(c) }.group_by(&:rank).sort.reverse.map(&:last).flatten
-        end
-
-        define_property_method property_id do
-          __send__("#{property_id}s").first
-        end
-      end
     end
 
     # TODO: have an option that defaults to a different language
@@ -58,5 +83,9 @@ module Wikisnakker
       return [] unless all_aliases.key?(lang.to_sym)
       all_aliases[lang.to_sym].map { |a| a[:value] }
     end
+
+    private
+
+    attr_reader :raw
   end
 end
