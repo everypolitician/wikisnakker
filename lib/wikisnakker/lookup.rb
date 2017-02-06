@@ -18,7 +18,7 @@ module Wikisnakker
     end
 
     def properties
-      @used_props.to_a.map { |e| "Q#{e}".to_sym }
+      @used_props.to_a
     end
 
     def values
@@ -119,7 +119,7 @@ module Wikisnakker
     def used_properties
       used_props = []
       each_wikibase_entitiyid(json) do |entityid|
-        used_props << entityid[:value][:'numeric-id']
+        used_props << "Q#{entityid[:value][:'numeric-id']}"
       end
       used_props
     end
