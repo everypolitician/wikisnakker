@@ -41,19 +41,8 @@ module Wikisnakker
 
     def get(*ids)
       json = Query.new(ids).json
-      save_wikibase_entityids(json)
-      json
-    end
-
-    # If a property is set to another Wikidata article, resolve that
-    # (e.g. set 'gender' to 'male' rather than 'Q6581097')
-    # We don't know yet what that will resolve to, and we don't want
-    # to look them up one by one, so keep track of any entity ids we
-    # encounter and then resolve them later in '#populate_with'.
-    def save_wikibase_entityids(json)
-      each_wikibase_entitiyid(json) do |entityid|
-        @used_props << entityid[:value][:'numeric-id']
-      end
+      @used_props += json.used_properties
+      json.expanded
     end
 
     def each_wikibase_entitiyid(obj)
@@ -89,7 +78,7 @@ module Wikisnakker
     end
 
     def json
-      FancyJson.new(Yajl::Parser.parse(open(url), symbolize_keys: true)).expanded
+      FancyJson.new(Yajl::Parser.parse(open(url), symbolize_keys: true))
     end
 
     private
@@ -119,7 +108,50 @@ module Wikisnakker
     end
 
     def expanded
-      @json
+      json
+    end
+
+    # If a property is set to another Wikidata article, resolve that
+    # (e.g. set 'gender' to 'male' rather than 'Q6581097')
+    # We don't know yet what that will resolve to, and we don't want
+    # to look them up one by one, so keep track of any entity ids we
+    # encounter and then resolve them later in '#populate_with'.
+    def used_properties
+      used_props = []
+      each_wikibase_entitiyid(json) do |entityid|
+        used_props << entityid[:value][:'numeric-id']
+      end
+      used_props
+    end
+
+    private
+
+    attr_reader :json
+
+    def each_wikibase_entitiyid(obj)
+      recurse_proc(obj) do |result|
+        next unless result.is_a?(Hash) && result[:type] == 'wikibase-entityid'.freeze
+        yield(result)
+      end
+    end
+
+    # Recursively calls passed _Proc_ if the parsed data structure is an _Array_ or _Hash_
+    # Taken from the json gem.
+    # @see http://git.io/v4Tf7
+    def recurse_proc(result, &proc)
+      case result
+      when Array
+        result.each { |x| recurse_proc x, &proc }
+        proc.call result
+      when Hash
+        result.each do |x, y|
+          recurse_proc x, &proc
+          recurse_proc y, &proc
+        end
+        proc.call result
+      else
+        proc.call result
+      end
     end
   end
 end
